@@ -5,8 +5,7 @@ using UnityEngine;
 public class RotateByMouse : MonoBehaviour
 {
     public float rotateSpeedX=50,rotateSpeedY=50;//旋转XY
-    public Camera curCamera
-        ;//摄像机
+    public Camera curCamera;//摄像机
     // Start is called before the first frame update
     void Start()
     {

@@ -23,16 +23,9 @@ public class Player : MonoBehaviour
         touchMouse.SetState("默认");
         upOrDownTip.SetState("默认");
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    
     bool isJump = false;
-    private void FixedUpdate()
-    {
-     
-    }
+    
     private void OnCollisionEnter(Collision collision)
     {
         isJump = false;//回归不跳跃状态
@@ -243,42 +236,64 @@ public class Player : MonoBehaviour
         {
           //  touchMouse.SetState("");
         }
-        rig.velocity = transform.forward*y*moveSpeed+transform.right*x*moveSpeed+new Vector3( 0,rig.velocity.y,0)*GameController.Instance.thisMovePower;
+        //rig.velocity = transform.forward * y * moveSpeed + transform.right * x * moveSpeed + new Vector3( 0,rig.velocity.y,0) * GameController.Instance.thisMovePower;
 
+        #region Alex
+
+        //The fish automatically move forward
+        rig.velocity = transform.forward * moveSpeed;
+
+        #endregion
+        
+        
+        
         SetUpOrDown(0);
         float angle = -cameraRotate.getCurAngle;
-        if (angle > upTriggerAngle)
-        {
-            upOrDownTip.SetState("up");
-        }
-        else if (angle < downTriggerAngle)
-        {
 
-        upOrDownTip.SetState("down");
+        #region Alex
 
-        }    
-        else
+        if (Input.GetKey(KeyCode.W))
         {
-            upOrDownTip.SetState("none");
+            SetUpOrDown(1);
+        }else if (Input.GetKey(KeyCode.S))
+        {
+            SetUpOrDown(-1);
         }
+
+        #endregion
+        
+        // if (angle > upTriggerAngle)
+        // {
+        //     upOrDownTip.SetState("up");
+        // }
+        // else if (angle < downTriggerAngle)
+        // {
+        //
+        // upOrDownTip.SetState("down");
+        //
+        // }    
+        // else
+        // {
+        //     upOrDownTip.SetState("none");
+        // }
         //当检测到空格时
-        if (Input.GetKey(upOrDown_key))
-        { 
-            //上升检测
-            if (angle > upTriggerAngle)
-            {
-                //向上升
-                SetUpOrDown(1);
-                Debug.Log("up");
-            }
-            //下降检测
-            if (angle < downTriggerAngle)
-            {
-                //向下升
-                SetUpOrDown(-1);
-                Debug.Log("down");
-            }
-        }
+        // if (Input.GetKey(upOrDown_key))
+        // { 
+        //     //上升检测
+        //     if (angle > upTriggerAngle)
+        //     {
+        //         //向上升
+        //         SetUpOrDown(1);
+        //         Debug.Log("up");
+        //     }
+        //     //下降检测
+        //     if (angle < downTriggerAngle)
+        //     {
+        //         //向下升
+        //         SetUpOrDown(-1);
+        //         Debug.Log("down");
+        //     }
+        // }
         //上升下降
         float thisVSpeed =vMoveSpeed * GameController.Instance.thisMovePower * GetVSpeedPower();
         transform.position += Vector3.up * thisVSpeed * Time.deltaTime * upSpeed ;
@@ -375,6 +390,7 @@ public class Player : MonoBehaviour
 
         //发射波
         {
+            
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var bt = Instantiate(waveBulletPre);
@@ -403,4 +419,6 @@ public class Player : MonoBehaviour
         mouse.SetScale(curPressure);
         touchMouse.SetState(mouseState);
     }
+    
+    
 }

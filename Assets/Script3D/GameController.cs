@@ -53,7 +53,7 @@ public class GameController : MonoBehaviour
     public Camera uiCamera;
     public Transform mouseMove;
     public Transform ballMoveParent;
-    //压力表
+    //脩鹿脕娄卤铆
     public PressurePercent pressurePercent;
     bool isOver = false;
     public void GameOver()
@@ -84,7 +84,7 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //默认不显示鼠标 鼠标用其他体现
+        //脛卢脠脧虏禄脧脭脢戮脢贸卤锚 脢贸卤锚脫脙脝盲脣没脤氓脧脰
         ShowMouseLayer = 0;
      //   MouseRefeshPos();
     }
@@ -123,7 +123,7 @@ public class GameController : MonoBehaviour
 
     void MouseRefeshPos()
     {
-        //手指在鼠标位置
+        //脢脰脰赂脭脷脢贸卤锚脦禄脰脙
         Vector3 touchPos = Input.mousePosition;
         //Vector3 worldPos= gameCamera.ScreenToWorldPoint(touchPos);
         Vector3 uiPos = uiCamera.ScreenToWorldPoint(touchPos);
@@ -133,7 +133,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //当玩家按下
+        //碌卤脥忙录脪掳麓脧脗
 
         //  MouseRefeshPos();
         if (isOver)

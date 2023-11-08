@@ -9,15 +9,15 @@ public class PlayerController : MonoBehaviour
     public void SetDie()
     {
         isDie = true;
-        Debug.Log("¸ÕÌå"+rig);
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½"+rig);
         rig.velocity = Vector3.zero;
     }
     private void Awake()
     {
         rig = GetComponent<Rigidbody>();
-        touchMouse.SetState("Ä¬ÈÏ");
+        touchMouse.SetState("Ä¬ï¿½ï¿½");
     }
-    //ÒÆ¶¯
+    //ï¿½Æ¶ï¿½
     public float moveSpeed = 10;
     int thisMoveDir;
     public StateIcon touchMouse;
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         thisMoveDir = dir;
-        rig.velocity =transform.forward* dir*moveSpeed*GameController.Instance.thisMovePower;
+        //rig.velocity =transform.forward* dir*moveSpeed*GameController.Instance.thisMovePower;
     }
     public float vMoveSpeed = 0;
     public void SetUpOrDown(int dir)
@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
         this.vMoveSpeed = dir;
     }
    
-    //Ðý×ª
+    //ï¿½ï¿½×ª
     public float rotateSpeed = 10;
     float rotatePower = 0;
     public void SetRotate(int power)
@@ -51,16 +51,16 @@ public class PlayerController : MonoBehaviour
         }
         rotatePower = power;
     }
-    //ÉÏÉýºÍÏÂ½µ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½
     public float upSpeed = 10;
 
 
 
-    //¼ÓÑ¹¼õÑ¹
+    //ï¿½ï¿½Ñ¹ï¿½ï¿½Ñ¹
     public float curPressure = 0.5f;
     public float addPressurePercentSpeed_Move = 0.5f;
     public float addPressurePercentSpeed_Touch = 0.7f;
-    //Íâ½çÔöÑ¹¼õÑ¹
+    //ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½Ñ¹
     public void AddZengYa(float power)
     {
         curPressure += power;
@@ -100,18 +100,28 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        float v = Input.GetAxis("Vertical");
-        if (v == 0)
-        {
-            SetDirMove(0);
-        }
-        else
-        {
-            SetDirMove((int)Mathf.Sign(v));
-        }
 
-        rig.velocity = transform.forward * thisMoveDir * moveSpeed * GameController.Instance.thisMovePower;
+        #region Forward&Backward Movement
 
+        // //Jayde
+        // float v = Input.GetAxis("Vertical");
+        // if (v == 0)
+        // {
+        //     SetDirMove(0);
+        // }
+        // else
+        // {
+        //     SetDirMove((int)Mathf.Sign(v));
+        // }
+        //
+        // rig.velocity = transform.forward * thisMoveDir * moveSpeed * GameController.Instance.thisMovePower;
+        
+        //Alex
+        rig.velocity = transform.forward * moveSpeed;
+
+
+        #endregion
+       
         float h = Input.GetAxis("Horizontal");
         if (h == 0)
         {
@@ -121,12 +131,13 @@ public class PlayerController : MonoBehaviour
         {
             SetRotate((int)Mathf.Sign(h));
         }
-        //Ðý×ª
+        //ï¿½ï¿½×ª
         transform.Rotate(Vector3.up*rotatePower*Time.deltaTime*rotateSpeed* GameController.Instance.thisMovePower);
-        //ÉÏÉýÏÂ½µ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½
        
         transform.position += Vector3.up * upSpeed * Time.deltaTime* vMoveSpeed * GameController.Instance.thisMovePower;
-        //Íæ¼ÒÎ»ÖÃÐÞÕý
+        
+        //ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (Vector3.Distance(transform.position,playerRangeMiddle.position)>moveRange)
         {
             Vector3 dir = (transform.position - playerRangeMiddle.position ).normalized;
@@ -136,14 +147,14 @@ public class PlayerController : MonoBehaviour
         {
             vMoveSpeed = 0;
         }
-        //Ñ¹Á¦Öµ¼ÆËã
+        //Ñ¹ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
         if (vMoveSpeed != 0)
         {
-            //Ôö¼ÓÑ¹Á¦Öµ
+            //ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½Öµ
             var Add = addPressurePercentSpeed_Move * vMoveSpeed * Time.deltaTime;
             curPressure -= Add;
            
-            //¸øÐ¡ÇòÔö¼ÓÑ¹Á¦Öµ
+            //ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½Öµ
             if (touchBall!=null)
             {
                 touchBall.AddYaLi(Add);
@@ -161,22 +172,22 @@ public class PlayerController : MonoBehaviour
 
             }
           
-            //ÊÖ¶¯ÔöÑ¹¼õÑ¹
+            //ï¿½Ö¶ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½Ñ¹
             if (Input.GetKey(KeyCode.Q))
             {
                 AddZengYa(addPressurePercentSpeed_Touch * Time.deltaTime);
-                Debug.Log("°´ÏÂq");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½q");
             }
             if (Input.GetKey(KeyCode.E))
             {
-                Debug.Log("°´ÏÂe");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½e");
                 AddZengYa(-addPressurePercentSpeed_Touch * Time.deltaTime);
             }
            
         }
         else
         {
-            //×Ô¶¯»Ø¸´Æ½¾ùÖµ
+            //ï¿½Ô¶ï¿½ï¿½Ø¸ï¿½Æ½ï¿½ï¿½Öµ
            // curPressure = 0.5f;
         }
        
@@ -185,30 +196,30 @@ public class PlayerController : MonoBehaviour
         GameController.Instance.pressurePercent.SetValue(curPressure);
         mouse.SetScale(curPressure);
 
-        //²Ù¿ØÐ¡Çò
+        //ï¿½Ù¿ï¿½Ð¡ï¿½ï¿½
         {
-            //Êó±êµã»÷µ½ÁËÇò ¾Í¿ÉÒÔÍÏ×§Ð¡Çò
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½×§Ð¡ï¿½ï¿½
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 var ray = GameController.Instance.gameCamera.ScreenPointToRay(Input.mousePosition);
-                //·¢ÉäÉäÏß µã»÷Ð¡Çò
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½
                 RaycastHit hit;
                 bool isRay = Physics.Raycast(ray, out hit, touchDistance, ballMask);
                 if (isRay)
                 {
                     thisDistance = hit.distance;
-                    Debug.Log("ÉäÏß¼ì²âµ½ÁË" + hit.transform.name + hit.distance);
+                    Debug.Log("ï¿½ï¿½ï¿½ß¼ï¿½âµ½ï¿½ï¿½" + hit.transform.name + hit.distance);
                     isTouchBall = true;
                     touchBall = hit.transform.GetComponent<TouchMoveBangDingPlayer>();
                     touchBall.isTouch = true;
-                    touchMouse.SetState("ÍÏ×§");
+                    touchMouse.SetState("ï¿½ï¿½×§");
                 }
             }
             if (touchBall==null)
             {
                 touchBall = null;
                 isTouchBall = false;
-                touchMouse.SetState("Ä¬ÈÏ");
+                touchMouse.SetState("Ä¬ï¿½ï¿½");
             }
             if (isTouchBall)
             {
@@ -223,16 +234,16 @@ public class PlayerController : MonoBehaviour
                 touchBall.isTouch = false;
                 touchBall = null;
                 isTouchBall = false;
-                touchMouse.SetState("Ä¬ÈÏ");
+                touchMouse.SetState("Ä¬ï¿½ï¿½");
             }
 
         }
-        //·¢Éä²¨
+        //ï¿½ï¿½ï¿½ä²¨
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var bt = Instantiate(waveBulletPre);
-                //¹Ì¶¨·½Ïò
+                //ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½
                 /*
                 {
                     bt.transform.position = firePos.position;
@@ -242,7 +253,7 @@ public class PlayerController : MonoBehaviour
                 }
                 */
                 {
-                    //»ñÈ¡Êó±êÖ¸Õë
+                    //ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
                     Ray ray = GameController.Instance.gameCamera.ScreenPointToRay(Input.mousePosition);
                     bt.transform.position = firePos.position;
                     bt.transform.forward = ray.direction.normalized;
