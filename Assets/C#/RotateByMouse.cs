@@ -39,7 +39,6 @@ public class RotateByMouse : MonoBehaviour
             cameraRotate.x -= 360;
         }
         else if (cameraRotate.x < -180)
-       
         {
             cameraRotate.x += 360;
         }
