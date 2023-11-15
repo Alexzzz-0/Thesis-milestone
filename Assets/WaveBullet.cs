@@ -13,6 +13,11 @@ public class WaveBullet : MonoBehaviour
     Vector3 moveDir;
     float curDistance = 0;
     public float forcePowerToFish=1000;
+    Player player;
+    private void Awake()
+    {
+        player = GameController.Instance.player;
+    }
     public void SetMove(Vector3 dir)
     {
         startPos = transform.position;
@@ -26,14 +31,27 @@ public class WaveBullet : MonoBehaviour
     {
         
     }
+    bool isDie = false;
     private void OnTriggerEnter(Collider other)
     {
+        if (isDie)
+        {
+            return;
+        }
+        /*
         if (other.tag=="Ball")
         {
             Destroy(this.gameObject, 0.25f);
             Vector3 forceDir= (other.transform.position - transform.position).normalized;
             other.GetComponent<Rigidbody>().AddForce(forceDir * GetForce);
             other.GetComponent<TouchMoveBangDingPlayer>().xingbianTouch.AddForce(transform.position, forceDir, GetForce*forcePowerToFish);
+        }
+        */
+        if (other.GetComponent<FishBase>())
+        {
+            isDie = true;
+            Destroy(this.gameObject, 0.25f);
+            player.JudgeFish(other.GetComponent<FishBase>());
         }
     }
     float GetForce

@@ -91,8 +91,8 @@ public class PlayerController : MonoBehaviour
     public WaveBullet waveBulletPre;
     public Transform playerRangeMiddle;
     public float moveRange = 10;
-    [Header("touchDistance")]
-    public float touchDistance = 100;
+    [Header("ø…“‘µ„ª˜æ‡¿Î")]
+    public float touchDistance = 2000;
     // Update is called once per frame
     void Update()
     {

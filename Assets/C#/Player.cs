@@ -26,7 +26,12 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //   ReviveFishType();
+        /*测试身份*/
+        curFishType ="Pink";
+        stateIcon_Fish.SetState(curFishType);
+        stateIcon_Fish2.SetState(curFishType);
+        mouseScale.ResetScale();
     }
     bool isJump = false;
     private void FixedUpdate()
@@ -52,7 +57,7 @@ public class Player : MonoBehaviour
     bool isTouchBall = false;
     public StateIcon touchMouse;
     [Header("touch Distance")]
-    public float touchDistance = 2;
+    public float touchDistance = 100;
     //发射子弹
     public PressureMouse mouse;
     public Transform firePos;
@@ -62,7 +67,7 @@ public class Player : MonoBehaviour
     float forceTimer = 0;
     bool isForceMove = false;
     Vector3 moveDir_Force;
-    void ForceMove(Vector3 moveDir_Force)
+   public  void ForceMove(Vector3 moveDir_Force)
     {
         this. moveDir_Force=moveDir_Force;
         isForceMove = true;
@@ -124,6 +129,63 @@ public class Player : MonoBehaviour
         mouse.SetScale(curPressure);
         StartCoroutine(wudiIE());
     }
+    public StateIcon stateIcon_Fish;
+    public StateIcon stateIcon_Fish2;
+    public string curFishType = "Black";
+    void ReviveFishType()
+    {
+        string[] s = new string[] {"Pink","Red","Black" };
+        curFishType = s[Random.Range(0,s.Length)];
+        stateIcon_Fish.SetState(curFishType);
+        stateIcon_Fish2.SetState(curFishType);
+    }
+    public Transform createPinkFishPos;
+   public  void SetFishDie()
+    {
+        if (isDie)
+        {
+            return;
+        }
+        isDie = true;
+        StartCoroutine(ReviveFishIE());
+    }
+    IEnumerator ReviveFishIE()
+    {
+        stateIcon_Fish2.SetState("");
+        stateIcon_Fish.SetState("");
+        yield return new WaitForSeconds(1);
+        ReviveFishType();
+        isDie = false;
+        mouseScale.ResetScale();
+    }
+    public SetScale mouseScale;
+    // Update is called once per frame
+    public int useCount_Pink = 2;
+    int useCounter = 0;
+    public void AddScale()
+    {
+        useCounter++;
+        GameController.Instance.AddPinkCount();
+        if (useCounter>= useCount_Pink)
+        {
+            useCounter = 0;
+            mouseScale.AddThisScale();
+        }
+      
+    }
+    public bool isRedWin = false;
+    public bool isBlackWin = false;
+    public bool isPinkWin = false;
+    public RedBullet redBullet;
+    public PinkBullet pinkBullet;
+    public BlackBullet blackBullet;
+    public float DownScaleTime_NoEatFish = 30;
+    float downScaleTimer_NoEatFish = 0;
+    public void RefeshScaleTimer_NoEatFish()
+    {
+        downScaleTimer_NoEatFish = 0;
+    }
+   public  float rotateSpeed = 360;
     // Update is called once per frame
     void Update()
     {
@@ -230,7 +292,19 @@ public class Player : MonoBehaviour
         //move
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
-        
+
+        if (x!=0&&y!=0)
+        {
+            y= 0;
+        }
+        if (x<0)
+        {
+            mouseState = "left";
+        }
+        if (x>0)
+        {
+            mouseState = "right";
+        }
         if (Mathf.Abs(y) >0)
         {
             if (touchBall==null)
@@ -243,6 +317,7 @@ public class Player : MonoBehaviour
         {
           //  touchMouse.SetState("");
         }
+        transform.Rotate(Vector3.up*x*rotateSpeed*Time.deltaTime);
         rig.velocity = transform.forward*y*moveSpeed+transform.right*x*moveSpeed+new Vector3( 0,rig.velocity.y,0)*GameController.Instance.thisMovePower;
 
         SetUpOrDown(0);
@@ -269,14 +344,14 @@ public class Player : MonoBehaviour
             {
                 //向上升
                 SetUpOrDown(1);
-                Debug.Log("up");
+               // Debug.Log("up");
             }
             //下降检测
             if (angle < downTriggerAngle)
             {
                 //向下升
                 SetUpOrDown(-1);
-                Debug.Log("down");
+              //  Debug.Log("down");
             }
         }
         //上升下降
@@ -377,8 +452,7 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var bt = Instantiate(waveBulletPre);
-
+              
                 /*
                 {
                     bt.transform.position = firePos.position;
@@ -389,11 +463,7 @@ public class Player : MonoBehaviour
                 */
                 {
                     
-                    Ray ray = GameController.Instance.gameCamera.ScreenPointToRay(Input.mousePosition);
-                    bt.transform.position = firePos.position;
-                    bt.transform.forward = ray.direction.normalized;
-                    bt.SetMove(ray.direction.normalized);
-                    ForceMove(-firePos.forward);
+                
                 }
             }
         }
@@ -402,5 +472,133 @@ public class Player : MonoBehaviour
         GameController.Instance.pressurePercent.SetValue(curPressure);
         mouse.SetScale(curPressure);
         touchMouse.SetState(mouseState);
+
+        //鱼种类
+        switch (curFishType)
+        {
+            case "Red":
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        //发射红色子弹
+                        //var bt = Instantiate(redBullet);
+                        var bt = Instantiate(waveBulletPre);
+                        Ray ray = GameController.Instance.gameCamera.ScreenPointToRay(Input.mousePosition);
+                        bt.transform.position = firePos.position;
+                        bt.transform.forward = ray.direction.normalized;
+                        bt.SetMove(ray.direction.normalized);
+                    }
+                 
+                   // ForceMove(-firePos.forward);
+                }
+                break;
+            case "Black":
+                {
+                    /*
+                    //当没有海草 死亡
+
+                    bool isHasHaiCao = false;
+                    for (int i = 0; i < GameController.Instance.haicaoParent.childCount; i++)
+                    {
+                        if (!GameController.Instance.haicaoParent.GetChild(i).GetComponent<HaiCaoSC>().isDie)
+                        {
+                            isHasHaiCao = true;
+                        }
+                    }
+                    if (!isHasHaiCao)
+                    {
+                        SetFishDie();
+                    }
+                    */
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        //var bt = Instantiate(blackBullet);
+                        var bt = Instantiate(waveBulletPre);
+                        Ray ray = GameController.Instance.gameCamera.ScreenPointToRay(Input.mousePosition);
+                        bt.transform.position = firePos.position;
+                        bt.transform.forward = ray.direction.normalized;
+                        bt.SetMove(ray.direction.normalized);
+                    }
+                    
+                    if (isChongCi)
+                    {
+                        chongciTimer += Time.deltaTime;
+                        if (chongciTimer>chongciTime)
+                        {
+                            isChongCi = false;
+                            chongciCoolTimer = 0;
+                        }
+                        transform.position += GameController.Instance.gameCamera.transform.forward * chongciSpeed * Time.deltaTime;
+                    }
+                    else
+                    {
+                        chongciCoolTimer += Time.deltaTime;
+                        if (Input.GetKeyDown(KeyCode.LeftShift))
+                        {
+                            if (chongciCoolTimer>chongciCoolTime)
+                            {
+                                chongciCoolTimer = 0;
+                                chongciTimer = 0;
+                                isChongCi = true;
+                            }
+                          
+                        }
+                    }
+                 
+
+                }
+                break;
+            case "Pink":
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        // var bt = Instantiate(pinkBullet);
+                        var bt = Instantiate(waveBulletPre);
+                        Ray ray = GameController.Instance.gameCamera.ScreenPointToRay(Input.mousePosition);
+                        bt.transform.position = firePos.position;
+                        bt.transform.forward = ray.direction.normalized;
+                        bt.SetMove(ray.direction.normalized);
+                    }
+                    downScaleTimer_NoEatFish += Time.deltaTime;
+                    if (downScaleTimer_NoEatFish > DownScaleTime_NoEatFish)
+                    {
+                        downScaleTimer_NoEatFish = 0;
+                        mouseScale.RemoveThisScale();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+    public float chongciSpeed = 10;
+    bool isChongCi = false;
+    float chongciTimer = 0;
+    public float chongciTime = 0.5f;
+    public float chongciCoolTime = 0;
+    float chongciCoolTimer = 0;
+    public int redCounter = 0;
+    public int blackCounter = 0;
+    public int pinkCounter = 0;
+    public void JudgeFish(FishBase fish)
+    {
+        if (fish is RedFish)
+        {
+            GameController.Instance.tipState.SetState("Red"+ redCounter);
+            redCounter ++;
+            AddScale();
+            fish.DeleteThis();
+        }
+        if (fish is PinkFish)
+        {
+            GameController.Instance.tipState.SetState("Pink" + pinkCounter);
+            pinkCounter++;
+        }
+        if (fish is BlackFish)
+        {
+            GameController.Instance.tipState.SetState("Black" + blackCounter);
+            blackCounter++;
+        }
     }
 }
